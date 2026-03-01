@@ -38,9 +38,10 @@ func main() {
 			panic(err)
 		}
 
-		msgs := comp.Messages()
-		if len(msgs) > 0 {
-			fmt.Println(msgs[len(msgs)-1].Text)
+		text, err := comp.Text()
+		if err != nil {
+			panic(err)
 		}
+		fmt.Println(text)
 	}
 }

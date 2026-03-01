@@ -95,7 +95,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("LLM says:\n %s\n", text)
+	fmt.Printf("LLM says:\n%s\n", text)
 }
 ```
 
@@ -151,7 +151,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("%s\n", text)
+		fmt.Println(text)
 	}
 }
 ```

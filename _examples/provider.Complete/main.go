@@ -24,5 +24,5 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("LLM says: %s\n", text)
+	fmt.Printf("LLM says:\n%s\n", text)
 }
