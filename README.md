@@ -133,7 +133,7 @@ func main() {
 
 ## Sources
 
-* [github.com/@0x1eef][https://github.com/0x1eef/ali#readme]
+* [github.com/@0x1eef](https://github.com/0x1eef/ali#readme)
 
 ## License
 
