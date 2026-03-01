@@ -32,6 +32,32 @@ func main() {
 }
 ```
 
+But what happens when you don't want to use [provider.Select](provider/provider.go) ? In
+that case a specific instance of a provider can be created instead. The example will use
+OpenAI but it could also be Anthropic or Gemini instead. It is a little bit more verbose
+and sometimes harder to work with &ndash; that's the main reason why
+[provider.Select](provider/provider.go)
+exists in the first place:
+
+```go
+package main
+
+import (
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/openai"
+)
+
+func main() {
+	p, err := openai.New(
+		openai.WithToken("yourtoken"),
+	)
+	if err != nil {
+		panic(err)
+	}
+	// do something with 'p'
+}
+```
+
 #### Complete
 
 All providers implement a [Complete](ali.go) method that accepts a
