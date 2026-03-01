@@ -4,9 +4,9 @@
 
 ## About
 
-Ali provides a zero-dependency Go toolkit for Large Language Models that includes
-OpenAI, Gemini, and Anthropic. The toolkit is young but plans full support
-for chat, streaming, tool calling, audio, images, files, and structured outputs.
+The Ali project provides a zero-dependency Go toolkit for Large Language Models
+that includes OpenAI, Gemini, and Anthropic. The toolkit is young but plans full
+support for chat, streaming, tool calling, audio, images, files, and structured outputs.
 
 ## Quick Start
 
