@@ -48,7 +48,6 @@ type Content struct {
 	Parts []Part `json:"parts"`
 }
 
-
 type Blob struct {
 	MIMEType string `json:"mimeType"`
 	Data     string `json:"data"`

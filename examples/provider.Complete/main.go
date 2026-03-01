@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-		"github.com/0x1eef/ali"
-		"github.com/0x1eef/ali/provider"
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
 )
 
 func main() {
