@@ -6,17 +6,19 @@ import (
 
 type Session struct {
 	Provider ali.Provider `json:"-"`
+	Options []func(*ali.CompletionConfig) `json:"-"`
 	Messages []ali.Message
 }
 
-func New(provider ali.Provider) (*Session, error) {
-	s := Session{Provider: provider}
+func New(provider ali.Provider, options ...func(*ali.CompletionConfig)) (*Session, error) {
+	s := Session{Provider: provider, Options: options}
 	return &s, nil
 }
 
 func (ses *Session) Talk(options ...func(*ali.CompletionConfig)) (ali.Completion, error) {
-	options = append(options, ali.WithMessages(ses.Messages))
-	completion, err := ses.Provider.Complete(options...)
+	allOptions := append(ses.Options, options...)
+	allOptions = append(allOptions, ali.WithMessages(ses.Messages))
+	completion, err := ses.Provider.Complete(allOptions...)
 	if err != nil {
 		return nil, err
 	}

@@ -10,8 +10,8 @@ const (
 )
 
 type Message struct {
-	Role string `json:"-"`
-	Text string `json:"-"`
+	Role string `json:"role"`
+	Text string `json:"content"`
 }
 
 type Completion interface {
