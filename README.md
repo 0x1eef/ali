@@ -1,3 +1,7 @@
+<p align="center">
+  <a href="#"><img src="ali.png" width="200" height="200" border="0" alt="Ali"></a>
+</p>
+
 ## About
 
 Ali provides a zero-dependency Go toolkit for Large Language Models that includes
