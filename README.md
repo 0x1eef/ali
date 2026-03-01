@@ -43,7 +43,6 @@ exists in the first place:
 package main
 
 import (
-	"github.com/0x1eef/ali"
 	"github.com/0x1eef/ali/openai"
 )
 
