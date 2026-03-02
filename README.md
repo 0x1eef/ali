@@ -4,111 +4,21 @@
 
 ## About
 
-The Ali project provides a zero-dependency Go toolkit for Large Language Models
-that includes OpenAI, Gemini, and Anthropic. The toolkit is young but plans full
-support for chat, streaming, tool calling, audio, images, files, and structured outputs.
+Ali is a provider-agnostic toolkit for Large Language Models with support
+for OpenAI, Gemini, and Anthropic. The library is implemented with zero dependencies
+outside Go’s standard library and that is considered to be a feature that
+Ali always wants to have.
 
 ## Quick Start
 
-#### Introduction
+#### session.Talk
 
-All providers implement the [ali.Provider](ali.go) interface, which serves as
-the foundation for the rest of the toolkit. This ensures a consistent,
-provider-agnostic API that allows implementations to be easily swapped.
-The [provider.New](provider/provider.go) function returns an [ali.Provider](ali.go)
-and automatically reads the corresponding API token from the process environment.
-For example, `$OPENAI_SECRET`, `$GEMINI_SECRET`, or `$ANTHROPIC_SECRET`:
-
-```go
-package main
-
-import (
-	"github.com/0x1eef/ali"
-	"github.com/0x1eef/ali/provider"
-)
-
-func main() {
-	p, err := provider.New(provider.OpenAI)
-	if err != nil {
-		panic(err)
-	}
-	// do something with 'p'
-}
-```
-
-But what happens when you don't want to use [provider.New](provider/provider.go) ? In
-that case a specific instance of a provider can be created instead. The example will use
-OpenAI but it could also be Anthropic or Gemini instead. It is a little bit more verbose
-and sometimes harder to work with &ndash; that's the main reason why
-[provider.New](provider/provider.go)
-exists in the first place:
-
-```go
-package main
-
-import (
-	"github.com/0x1eef/ali/openai"
-)
-
-func main() {
-	p, err := openai.New(
-		openai.WithToken("yourtoken"),
-	)
-	if err != nil {
-		panic(err)
-	}
-	// do something with 'p'
-}
-```
-
-#### Complete
-
-All providers implement a [Complete](ali.go) method that accepts a
-variable number of options and returns a [ali.Completion](completion.go)
-interface that is common across all providers.
-See [config.go](./config.go) for a list of all available options.
-The following example sends a simple prompt and prints the text
-response to the terminal:
-
-
-```go
-package main
-
-import (
-	"fmt"
-	"os"
-
-	"github.com/0x1eef/ali"
-	"github.com/0x1eef/ali/provider"
-)
-
-func main() {
-	p, err := provider.New(provider.OpenAI)
-	if err != nil {
-		panic(err)
-	}
-
-	c, err := p.Complete(
-		ali.WithPrompt("Hello from #golang :)"),
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	text, err := c.Text()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("LLM says:\n%s\n", text)
-}
-```
-
-#### Session
-
-The [ali.Session](./session/session.go) type maintains conversation history and
-context across multiple requests. Session keeps conversation state in memory and
-sends prior messages on each [Talk](session/session.go) call. It is
-transport/provider-neutral and works with any [ali.Provider](ali.go):
+[ali.Session](./session/session.go) maintains conversation history and
+context across multiple requests. A session keeps conversation state in
+memory and sends prior messages on each [Talk](session/session.go) call. It is
+transport/provider-neutral and works with any [ali.Provider](ali.go). The following
+example implements a simple **R**ead **E**val **P**rint **L**oop with the help of
+the [ali.Session](./session/session.go):
 
 ```go
 package main
@@ -124,7 +34,7 @@ import (
 )
 
 func main() {
-	p, err := provider.New(provider.Gemini)
+	p, err := provider.New(ali.Gemini)
 	if err != nil {
 		panic(err)
 	}
@@ -160,9 +70,195 @@ func main() {
 }
 ```
 
+#### session.{Save,Restore}
+
+A session can be saved to disk and afterwards restored via the
+[Session.Save](session/session.go) and
+[Session.Restore](session/session.go)
+methods. Going further &ndash;
+a session can be written to any io.Writer and read from any io.Reader
+via the [session.WriteTo](session/session.go) and [session.ReadFrom](session/session.go)
+methods.
+
+This opens the door for more than just writing to or reading from files on disk,
+and creates possibilities like storing a session in a database of some kind &ndash;
+for example, a JSONB column in a postgresql database would be perfect:
+
+```go
+package main
+
+import (
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+	"github.com/0x1eef/ali/session"
+)
+
+func main() {
+	p, err := provider.New(ali.OpenAI)
+	if err != nil {
+		panic(err)
+	}
+
+	ses, err := session.New(p)
+	if err != nil {
+		panic(err)
+	}
+
+	messages := []string{"hello", "a few questions", "what day is it?", "and is tomorrow sunday?"}
+	for _, m := range messages {
+		_, err := ses.Talk(ali.WithPrompt(m))
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if err := ses.Save("session.json"); err != nil {
+		panic(err)
+	}
+}
+```
+
+
+## Features
+
+#### Architecture
+
+* 🧩 Small, focused interfaces
+* 🔄 Provider-agnostic abstractions
+* ⚙️ Explicit configuration
+* 🚫 No global state
+
+#### Providers
+
+* 🌐 OpenAI, Gemini, and Anthropic providers
+* 🔌 Automatic environment-based token loading via [provider.New](provider/provider.go)
+* 🧱 Direct provider constructors via [openai.New](openai/openai.go) and friends
+* 🛰️ Support for providers with an OpenAI-compatible API via [openai.WithHost](openai/config.go)
+
+#### Requests
+
+* 🗂️ Stateless one-shot completions via [ali.Provider.Complete](ali.go)
+* 🛠️ Composable request options via [ali.WithPrompt](config.go), [ali.WithRole](config.go) and friends
+
+#### Sessions
+
+* 💬 In-memory multi-turn conversations via [session.Session](session/session.go)
+* 🔁 Conversation continuity via [session.Talk(...)](session/session.go)
+
+#### Completions
+
+* 📊 Unified completion access (`Text`, `InputTokens`, `OutputTokens`, `TotalTokens`)
+* 🔎 Raw provider response access with `Raw()`
+
+#### Dependencies
+
+* 📦 Zero dependencies outside Go standard library
+
+
+## Examples
+
+#### ali.Provider
+
+All providers implement the [ali.Provider](ali.go) interface, which serves as
+the foundation for the rest of the toolkit. This ensures a consistent,
+provider-agnostic API that allows implementations to be easily swapped.
+The [provider.New](provider/provider.go) function returns a type that implements
+the [ali.Provider](ali.go) interface and automatically reads the corresponding
+API token from the process environment.
+
+For example &ndash; `$OPENAI_SECRET`, `$GEMINI_SECRET`, or `$ANTHROPIC_SECRET`:
+
+```go
+package main
+
+import (
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+)
+
+func main() {
+	p, err := provider.New(ali.OpenAI)
+	if err != nil {
+		panic(err)
+	}
+	// do something with 'p'
+}
+```
+
+If explicit configuration is required, a provider can be constructed directly
+instead of using [provider.New](provider/provider.go). The example will use
+OpenAI but it could also be Anthropic or Gemini instead. It is a little bit more verbose
+and sometimes harder to work with &ndash; that's the main reason why
+[provider.New](provider/provider.go) exists in the first place:
+
+```go
+package main
+
+import (
+	"github.com/0x1eef/ali/openai"
+)
+
+func main() {
+	p, err := openai.New(
+		openai.WithToken("yourtoken"),
+	)
+	if err != nil {
+		panic(err)
+	}
+	// do something with 'p'
+}
+```
+
+#### Complete
+
+All providers implement a [Complete](ali.go) method that accepts a
+variable number of options and returns a [ali.Completion](ali.go)
+interface that is common across all providers. This method is stateless
+and does not carry state between method calls.  See [config.go](./config.go)
+for a list of all available options, and see the [next example](#session)
+that introduces sessions for how to maintain state between method calls.
+
+The following example sends a simple prompt and prints the text response to
+the terminal:
+
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+)
+
+func main() {
+	p, err := provider.New(ali.OpenAI)
+	if err != nil {
+		panic(err)
+	}
+
+	c, err := p.Complete(
+		ali.WithPrompt("Hello from #golang :)"),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	text, err := c.Text()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("LLM says:\n%s\n", text)
+}
+```
+
+
 ## Sources
 
 * [github.com/@0x1eef](https://github.com/0x1eef/ali#readme)
+* [codeberg.org/@0x1eef](https://codeberg.org/0x1eef/ali)
 
 ## License
 
