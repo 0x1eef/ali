@@ -5,8 +5,8 @@ import (
 )
 
 type Session struct {
-	Provider ali.Provider `json:"-"`
-	Options []func(*ali.CompletionConfig) `json:"-"`
+	Provider ali.Provider                  `json:"-"`
+	Options  []func(*ali.CompletionConfig) `json:"-"`
 	Messages []ali.Message
 }
 

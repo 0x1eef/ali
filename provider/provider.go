@@ -10,7 +10,13 @@ import (
 	"github.com/0x1eef/ali/openai"
 )
 
-func Select(providerName ali.ProviderName) (ali.Provider, error) {
+const (
+	OpenAI    = ali.OpenAI
+	Anthropic = ali.Anthropic
+	Gemini    = ali.Gemini
+)
+
+func New(providerName ali.ProviderName) (ali.Provider, error) {
 	switch providerName {
 	case ali.Gemini:
 		return gemini.New(

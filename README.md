@@ -15,8 +15,8 @@ support for chat, streaming, tool calling, audio, images, files, and structured 
 All providers implement the [ali.Provider](ali.go) interface, which serves as
 the foundation for the rest of the toolkit. This ensures a consistent,
 provider-agnostic API that allows implementations to be easily swapped.
-The [provider.Select](provider/provider.go) function selects a provider and
-automatically reads the corresponding API token from the process environment.
+The [provider.New](provider/provider.go) function returns an [ali.Provider](ali.go)
+and automatically reads the corresponding API token from the process environment.
 For example, `$OPENAI_SECRET`, `$GEMINI_SECRET`, or `$ANTHROPIC_SECRET`:
 
 ```go
@@ -28,7 +28,7 @@ import (
 )
 
 func main() {
-	p, err := provider.Select(ali.OpenAI)
+	p, err := provider.New(provider.OpenAI)
 	if err != nil {
 		panic(err)
 	}
@@ -36,11 +36,11 @@ func main() {
 }
 ```
 
-But what happens when you don't want to use [provider.Select](provider/provider.go) ? In
+But what happens when you don't want to use [provider.New](provider/provider.go) ? In
 that case a specific instance of a provider can be created instead. The example will use
 OpenAI but it could also be Anthropic or Gemini instead. It is a little bit more verbose
 and sometimes harder to work with &ndash; that's the main reason why
-[provider.Select](provider/provider.go)
+[provider.New](provider/provider.go)
 exists in the first place:
 
 ```go
@@ -83,7 +83,7 @@ import (
 )
 
 func main() {
-	p, err := provider.Select(ali.OpenAI)
+	p, err := provider.New(provider.OpenAI)
 	if err != nil {
 		panic(err)
 	}
@@ -124,7 +124,7 @@ import (
 )
 
 func main() {
-	p, err := provider.Select(ali.Gemini)
+	p, err := provider.New(provider.Gemini)
 	if err != nil {
 		panic(err)
 	}
@@ -146,12 +146,12 @@ func main() {
 			break
 		}
 
-		comp, err := ses.Talk(ali.WithPrompt(prompt))
+		c, err := ses.Talk(ali.WithPrompt(prompt))
 		if err != nil {
 			panic(err)
 		}
 
-		text, err := comp.Text()
+		text, err := c.Text()
 		if err != nil {
 			panic(err)
 		}

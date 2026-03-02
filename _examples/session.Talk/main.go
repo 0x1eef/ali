@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	p, err := provider.Select(ali.Gemini)
+	p, err := provider.New(provider.Gemini)
 	if err != nil {
 		panic(err)
 	}
