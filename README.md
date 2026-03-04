@@ -191,11 +191,16 @@ func main() {
 }
 ```
 
-If explicit configuration is required, a provider can be constructed directly
-instead of using [provider.New](provider/provider.go). The example will use
-OpenAI but it could also be Anthropic or Gemini instead. It is a little bit more verbose
-and sometimes harder to work with &ndash; that's the main reason why
-[provider.New](provider/provider.go) exists in the first place:
+But sometimes explicit configuration is preferred &ndash; for example, when a
+caller wants to import only OpenAI-specific code. Otherwise &ndash; when a caller
+imports the [provider](provider/provider.go) package they also import the OpenAI,
+Anthropic, and Gemini packages as well.
+
+In that scenario &ndash; and others like it &ndash; a provider can be built
+directly instead of using [provider.New](provider/provider.go). The example below
+uses OpenAI, but the same approach works for Anthropic and Gemini. This approach
+is a little more verbose, which is why [provider.New](provider/provider.go)
+exists in the first place but remains totally valid:
 
 ```go
 package main
@@ -212,6 +217,49 @@ func main() {
 		panic(err)
 	}
 	// do something with 'p'
+}
+```
+
+#### Complete
+
+All providers implement a [Complete](ali.go) method that accepts a
+variable number of options and returns a [ali.Completion](ali.go)
+interface that is common across all providers. This method is stateless
+and does not carry state between method calls.  See [config.go](./config.go)
+for a list of all available options, and see the [next example](#session)
+that introduces sessions for how to maintain state between method calls.
+
+The following example sends a simple prompt and prints the text response to
+the terminal:
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+)
+
+func main() {
+	p, err := provider.New(ali.OpenAI)
+	if err != nil {
+		panic(err)
+	}
+
+	c, err := p.Complete(
+		ali.WithPrompt("I am the city of knowledge and Ali is its gate"),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	text, err := c.Text()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("LLM says:\n%s\n", text)
 }
 ```
 
@@ -247,49 +295,6 @@ func main() {
 	c, err := p.Complete(
 		ali.WithPrompt("I am Ali"),
 		ali.WithContext(ctx),
-	)
-	if err != nil {
-		panic(err)
-	}
-
-	text, err := c.Text()
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("LLM says:\n%s\n", text)
-}
-```
-
-#### Complete
-
-All providers implement a [Complete](ali.go) method that accepts a
-variable number of options and returns a [ali.Completion](ali.go)
-interface that is common across all providers. This method is stateless
-and does not carry state between method calls.  See [config.go](./config.go)
-for a list of all available options, and see the [next example](#session)
-that introduces sessions for how to maintain state between method calls.
-
-The following example sends a simple prompt and prints the text response to
-the terminal:
-
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/0x1eef/ali"
-	"github.com/0x1eef/ali/provider"
-)
-
-func main() {
-	p, err := provider.New(ali.OpenAI)
-	if err != nil {
-		panic(err)
-	}
-
-	c, err := p.Complete(
-		ali.WithPrompt("I am the city of knowledge and Ali is its gate"),
 	)
 	if err != nil {
 		panic(err)
