@@ -17,8 +17,7 @@ type Container struct {
 	ExpiresAt string `json:"expires_at"`
 }
 
-// ContentBlock intentionally models common fields across multiple block variants.
-// For unknown or rapidly changing shapes, Content carries raw JSON-compatible data.
+// ContentBlock models common fields across multiple block variants.
 type ContentBlock struct {
 	Type string `json:"type"`
 

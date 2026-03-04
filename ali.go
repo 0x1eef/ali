@@ -30,10 +30,7 @@ type Completion interface {
 	Text() (string, error)
 	Messages() []Message
 	Thread() []Message
-	// This can be one of the following:
-	// 1) openai.Completion
-	// 2) anthropic.Completion
-	// 3) gemini.Completion
+	// Raw returns the provider-specific completion payload (eg openai.Completion).
 	Raw() any
 }
 
