@@ -60,6 +60,7 @@ func (provider *Gemini) Complete(options ...func(cfg *ali.CompletionConfig)) (al
 		request.WithBody(bytes.NewReader(body)),
 		request.WithParams(cfg.Params),
 		request.WithClient(provider.Client),
+		request.WithContext(cfg.Ctx),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
 			return nil
