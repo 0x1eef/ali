@@ -1,6 +1,9 @@
 <p align="center">
   <a href="#"><img src="ali.png" width="200" height="200" border="0" alt="Ali"></a>
 </p>
+<p align="center">
+I am the city of knowledge and Ali is its gate
+</p>
 
 ## About
 
