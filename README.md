@@ -6,8 +6,8 @@
 
 Ali is designed as a minimal, composable foundation for building LLM-powered
 applications in Go. It focuses on small interfaces, explicit configuration,
-and compatibility across providers. The implementation has zero dependencies
-outside Go's standard library.
+and compatibility across providers. Ali has zero dependencies outside Go's
+standard library.
 
 ## Quick Start
 

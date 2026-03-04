@@ -7,7 +7,7 @@ import (
 
 var (
 	ErrNotImplemented = errors.New("feature is not implemented")
-	ErrBadResponse    = errors.New("request produced a bad response")
+	ErrResponse       = errors.New("response indicates an error")
 )
 
 type ResponseError struct {
@@ -16,7 +16,7 @@ type ResponseError struct {
 }
 
 func (e ResponseError) Unwrap() error {
-	return ErrBadResponse
+	return ErrResponse
 }
 
 func (e ResponseError) Error() string {
