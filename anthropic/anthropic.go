@@ -76,10 +76,6 @@ func (ant *Anthropic) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	return nil
 }
 
-func (ant *Anthropic) Images() ali.Images {
-	return Images{}
-}
-
 func (ant *Anthropic) build(cfg *ali.CompletionConfig) ali.Params {
 	params := ali.Params{
 		"model":      cfg.Model,

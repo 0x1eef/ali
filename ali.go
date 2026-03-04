@@ -37,5 +37,8 @@ type Provider interface {
 	Name() ProviderName
 	ApplyDefaults(*CompletionConfig) error
 	Complete(options ...func(*CompletionConfig)) (Completion, error)
+}
+
+type ImageProvider interface {
 	Images() Images
 }

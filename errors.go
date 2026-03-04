@@ -6,8 +6,7 @@ import (
 )
 
 var (
-	ErrNotImplemented = errors.New("feature is not implemented")
-	ErrResponse       = errors.New("response indicates an error")
+	ErrResponse = errors.New("response indicates an error")
 )
 
 type ResponseError struct {

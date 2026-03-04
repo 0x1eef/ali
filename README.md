@@ -310,10 +310,15 @@ func main() {
 
 #### Images
 
-The [ali.Provider.Images](ali.go) method provides image generation capabilities
-for the providers that support it. The following example uses Gemini, and the
-[imagen](https://ai.google.dev/gemini-api/docs/imagen) model to generate an image
-from a prompt that is then written to disk:
+Both OpenAI and Gemini implement the [ali.ImageProvider](ali.go) interface
+but Anthropic does not. The following example uses a type assertion because
+not every provider implements the [ali.ImageProvider](ali.go) interface, and
+the type assertion acts as a guard.
+
+But it is possible to avoid the type assertion when you instantiate a provider
+directly (eg [openai.New](openai/openai.go)) instead of using [provider.New](provider/provider.go).
+The following example uses Gemini, and the [imagen](https://ai.google.dev/gemini-api/docs/imagen)
+model to generate an image from a prompt that is then written to disk:
 
 ```go
 package main
@@ -333,7 +338,13 @@ func main() {
 		panic(err)
 	}
 
-	images, err := p.Images().Create(
+	imgp, ok := p.(ali.ImageProvider)
+	if !ok {
+		fmt.Printf("%s does not support image generation\n", p.Name())
+		os.Exit(1)
+	}
+
+	images, err := imgp.Images().Create(
 		image.WithPrompt("I am the city of knowledge and Ali is its gate"),
 		image.WithQuantity(1),
 	)
