@@ -104,7 +104,11 @@ func main() {
 		panic(err)
 	}
 
-	messages := []string{"hello", "a few questions", "what day is it?", "and is tomorrow sunday?"}
+	messages := []string{
+		"Greetings.",
+		"I have something important to tell you.",
+		"The truth circulates with him wherever he goes.",
+	}
 	for _, m := range messages {
 		_, err := ses.Talk(ali.WithPrompt(m))
 		if err != nil {
@@ -221,13 +225,11 @@ that introduces sessions for how to maintain state between method calls.
 The following example sends a simple prompt and prints the text response to
 the terminal:
 
-
 ```go
 package main
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/0x1eef/ali"
 	"github.com/0x1eef/ali/provider"
@@ -240,7 +242,7 @@ func main() {
 	}
 
 	c, err := p.Complete(
-		ali.WithPrompt("Hello from #golang :)"),
+		ali.WithPrompt("I am the city of knowledge and Ali is its gate"),
 	)
 	if err != nil {
 		panic(err)
@@ -254,6 +256,52 @@ func main() {
 }
 ```
 
+#### Images
+
+The [ali.Provider.Images](ali.go) method provides image generation capabilities
+for the providers that support it. The following example uses Gemini, and the
+[imagen](https://ai.google.dev/gemini-api/docs/imagen) model to generate an image
+from a prompt that is then written to disk:
+
+```go
+package main
+
+import (
+	"os"
+	"fmt"
+
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+	"github.com/0x1eef/ali/image"
+)
+
+func main() {
+	p, err := provider.New(ali.Gemini)
+	if err != nil {
+		panic(err)
+	}
+
+	images, err := p.Images().Create(
+		image.WithPrompt("I am the city of knowledge and Ali is its gate"),
+		image.WithQuantity(1),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	for i, img := range images {
+		f, err := os.Create(fmt.Sprintf("%d.png", i+1))
+		if err != nil {
+			panic(err)
+		}
+		defer f.Close()
+		_, err = f.ReadFrom(img)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+```
 
 ## Sources
 

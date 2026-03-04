@@ -16,6 +16,10 @@ type Anthropic struct {
 	client *http.Client `json:"-"`
 }
 
+func (provider *Anthropic) Name() ali.ProviderName {
+	return ali.Anthropic
+}
+
 func New(options ...func(o *Anthropic)) (*Anthropic, error) {
 	provider := Anthropic{host: "api.anthropic.com", client: &http.Client{}}
 	for _, set := range options {
@@ -70,10 +74,6 @@ func (provider *Anthropic) Complete(options ...func(cfg *ali.CompletionConfig)) 
 	return CompletionAdapter{completion: &comp, thread: cfg.Messages}, nil
 }
 
-func (provider *Anthropic) Name() ali.ProviderName {
-	return ali.Anthropic
-}
-
 func (provider *Anthropic) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	if cfg.Model == "" {
 		cfg.Model = "claude-sonnet-4-20250514"
@@ -82,4 +82,8 @@ func (provider *Anthropic) ApplyDefaults(cfg *ali.CompletionConfig) error {
 		cfg.MaxTokens = 1024
 	}
 	return nil
+}
+
+func (provider *Anthropic) Images() ali.Images {
+	return Images{}
 }

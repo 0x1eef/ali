@@ -8,19 +8,19 @@ import (
 )
 
 func main() {
-	provider, err := provider.New(ali.OpenAI)
+	p, err := provider.New(ali.OpenAI)
 	if err != nil {
 		panic(err)
 	}
 
-	completion, err := provider.Complete(
-		ali.WithPrompt("Hello from #golang :)"),
+	c, err := p.Complete(
+		ali.WithPrompt("I am the city of knowledge and Ali is its gate"),
 	)
 	if err != nil {
 		panic(err)
 	}
 
-	text, err := completion.Text()
+	text, err := c.Text()
 	if err != nil {
 		panic(err)
 	}

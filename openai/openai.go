@@ -17,6 +17,10 @@ type OpenAI struct {
 	client *http.Client
 }
 
+func (provider *OpenAI) Name() ali.ProviderName {
+	return provider.name
+}
+
 func New(options ...func(o *OpenAI)) (*OpenAI, error) {
 	provider := OpenAI{name: ali.OpenAI, host: "api.openai.com", client: &http.Client{}}
 	for _, set := range options {
@@ -77,6 +81,6 @@ func (provider *OpenAI) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	return nil
 }
 
-func (provider *OpenAI) Name() ali.ProviderName {
-	return provider.name
+func (provider *OpenAI) Images() (ali.Images) {
+	return Images{}
 }
