@@ -11,17 +11,18 @@ import (
 )
 
 type Anthropic struct {
-	token  string       `json:"-"`
-	host   string       `json:"-"`
-	client *http.Client `json:"-"`
+	name   ali.ProviderName `json:"-"`
+	token  string           `json:"-"`
+	host   string           `json:"-"`
+	client *http.Client     `json:"-"`
 }
 
-func (provider *Anthropic) Name() ali.ProviderName {
-	return ali.Anthropic
+func (ant *Anthropic) Name() ali.ProviderName {
+	return ant.name
 }
 
 func New(options ...func(o *Anthropic)) (*Anthropic, error) {
-	provider := Anthropic{host: "api.anthropic.com", client: &http.Client{}}
+	provider := Anthropic{name: ali.Anthropic, host: "api.anthropic.com", client: &http.Client{}}
 	for _, set := range options {
 		set(&provider)
 	}
@@ -31,35 +32,26 @@ func New(options ...func(o *Anthropic)) (*Anthropic, error) {
 	return &provider, nil
 }
 
-func (provider *Anthropic) Complete(options ...func(cfg *ali.CompletionConfig)) (ali.Completion, error) {
+func (ant *Anthropic) Complete(options ...func(cfg *ali.CompletionConfig)) (ali.Completion, error) {
 	var comp Completion
 	var err error
-	cfg := ali.CompletionConfig{Provider: provider}
+	cfg := ali.CompletionConfig{Provider: ant}
 	if err := cfg.ApplyDefaults(options...); err != nil {
 		return nil, err
 	}
-	payload := struct {
-		Model     string    `json:"model"`
-		Messages  []Message `json:"messages"`
-		MaxTokens int       `json:"max_tokens"`
-	}{
-		Model:     cfg.Model,
-		Messages:  toProviderMessages(&cfg),
-		MaxTokens: cfg.MaxTokens,
-	}
-	body, err := json.Marshal(&payload)
+	params := ant.build(&cfg)
+	body, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
 	}
 	res, err := request.Post(
-		request.WithHost(provider.host),
+		request.WithHost(ant.host),
 		request.WithPath("/v1/messages"),
 		request.WithBody(bytes.NewReader(body)),
-		request.WithParams(cfg.Params),
-		request.WithClient(provider.client),
+		request.WithClient(ant.client),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
-			req.Header.Add("x-api-key", provider.token)
+			req.Header.Add("x-api-key", ant.token)
 			req.Header.Add("anthropic-version", "2023-06-01")
 			return nil
 		}),
@@ -74,7 +66,7 @@ func (provider *Anthropic) Complete(options ...func(cfg *ali.CompletionConfig)) 
 	return CompletionAdapter{completion: &comp, thread: cfg.Messages}, nil
 }
 
-func (provider *Anthropic) ApplyDefaults(cfg *ali.CompletionConfig) error {
+func (ant *Anthropic) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	if cfg.Model == "" {
 		cfg.Model = "claude-sonnet-4-20250514"
 	}
@@ -84,6 +76,18 @@ func (provider *Anthropic) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	return nil
 }
 
-func (provider *Anthropic) Images() ali.Images {
+func (ant *Anthropic) Images() ali.Images {
 	return Images{}
+}
+
+func (ant *Anthropic) build(cfg *ali.CompletionConfig) ali.Params {
+	params := ali.Params{
+		"model":      cfg.Model,
+		"messages":   toProviderMessages(cfg),
+		"max_tokens": cfg.MaxTokens,
+	}
+	for k, v := range cfg.Params {
+		params[k] = v
+	}
+	return params
 }
