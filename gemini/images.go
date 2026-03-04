@@ -18,7 +18,7 @@ type Images struct {
 
 func (i Images) Create(options ...func(*ali.ImageConfig)) ([]io.Reader, error) {
 	cfg := i.applyDefaults(options...)
-	params := i.getParams(cfg)
+	params := i.build(cfg)
 	reqBody, err := i.marshal(cfg.Prompt, params)
 	if err != nil {
 		return nil, err
@@ -39,7 +39,7 @@ func (i Images) applyDefaults(options ...func(*ali.ImageConfig)) *ali.ImageConfi
 	return &cfg
 }
 
-func (i Images) getParams(cfg *ali.ImageConfig) ali.Params {
+func (i Images) build(cfg *ali.ImageConfig) ali.Params {
 	params := ali.Params{
 		"sampleCount": cfg.Quantity,
 	}
