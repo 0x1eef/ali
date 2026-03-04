@@ -56,7 +56,7 @@ func (provider *Gemini) Complete(options ...func(cfg *ali.CompletionConfig)) (al
 	cfg.Params["key"] = provider.Token
 	res, err := request.Post(
 		request.WithHost(provider.Host),
-		request.WithPath(fmt.Sprintf("/v1/beta/models/%s/generateContent", cfg.Model)),
+		request.WithPath(fmt.Sprintf("/v1beta/models/%s:generateContent", cfg.Model)),
 		request.WithBody(bytes.NewReader(body)),
 		request.WithParams(cfg.Params),
 		request.WithClient(provider.Client),
