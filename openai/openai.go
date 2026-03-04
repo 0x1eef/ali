@@ -11,22 +11,21 @@ import (
 )
 
 type OpenAI struct {
-	name   ali.ProviderName
-	token  string
-	host   string
+	Token  string
+	Host   string
 	client *http.Client
 }
 
 func (provider *OpenAI) Name() ali.ProviderName {
-	return provider.name
+	return provider.Name()
 }
 
 func New(options ...func(o *OpenAI)) (*OpenAI, error) {
-	provider := OpenAI{name: ali.OpenAI, host: "api.openai.com", client: &http.Client{}}
+	provider := OpenAI{Host: "api.openai.com", client: &http.Client{}}
 	for _, set := range options {
 		set(&provider)
 	}
-	if provider.token == "" {
+	if provider.Token == "" {
 		return nil, fmt.Errorf("token is required")
 	}
 	return &provider, nil
@@ -53,14 +52,14 @@ func (provider *OpenAI) Complete(options ...func(*ali.CompletionConfig)) (ali.Co
 		return nil, err
 	}
 	res, err := request.Post(
-		request.WithHost(provider.host),
+		request.WithHost(provider.Host),
 		request.WithPath("/v1/chat/completions"),
 		request.WithBody(bytes.NewReader(body)),
 		request.WithParams(cfg.Params),
 		request.WithClient(provider.client),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
-			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", provider.token))
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
 			return nil
 		}),
 	)
@@ -82,5 +81,5 @@ func (provider *OpenAI) ApplyDefaults(cfg *ali.CompletionConfig) error {
 }
 
 func (provider *OpenAI) Images() ali.Images {
-	return Images{}
+	return Images{provider: provider}
 }

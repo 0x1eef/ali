@@ -61,11 +61,7 @@ func (i Images) marshal(prompt string, params ali.Params) ([]byte, error) {
 		Parameters: params,
 		Instances:  []instance{{Prompt: prompt}},
 	}
-	b, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	return b, nil
+	return json.Marshal(body)
 }
 
 func (i Images) decode(res *http.Response) ([]io.Reader, error) {
