@@ -1,9 +1,10 @@
 package request
 
 import (
+	"io"
 	"net/http"
 
-	"github.com/0x1eef/ali/errors"
+	"github.com/0x1eef/ali"
 )
 
 func Post(options ...func(*config)) (*http.Response, error) {
@@ -27,7 +28,12 @@ func Post(options ...func(*config)) (*http.Response, error) {
 		return nil, err
 	}
 	if res.StatusCode != http.StatusOK {
-		return nil, errors.ResponseError{Response: res}
+		body, _ := io.ReadAll(res.Body)
+		defer res.Body.Close()
+		return nil, ali.ResponseError{
+			StatusCode: res.StatusCode,
+			Body:       body,
+		}
 	}
 	return res, nil
 }

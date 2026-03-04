@@ -1,7 +1,6 @@
 package ali
 
 import (
-	"fmt"
 	"io"
 )
 
@@ -12,10 +11,6 @@ const (
 	OpenAI    ProviderName = "OpenAI"
 	Anthropic ProviderName = "Anthropic"
 	Gemini    ProviderName = "Gemini"
-)
-
-var (
-	ErrNotImplemented = fmt.Errorf("feature is not implemented")
 )
 
 type Message struct {
