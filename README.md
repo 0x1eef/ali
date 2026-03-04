@@ -4,21 +4,21 @@
 
 ## About
 
-Ali is a provider-agnostic toolkit for Large Language Models with support
-for OpenAI, Gemini, and Anthropic. The library is implemented with zero dependencies
-outside Go’s standard library and that is considered to be a feature that
-Ali always wants to have.
+Ali is designed as a minimal, composable foundation for building LLM-powered
+applications in Go. It focuses on small interfaces, explicit configuration,
+and compatibility across providers. The implementation has zero dependencies
+outside Go's standard library.
 
 ## Quick Start
 
 #### session.Talk
 
 [ali.Session](./session/session.go) maintains conversation history and
-context across multiple requests. A session keeps conversation state in
-memory and sends prior messages on each [Talk](session/session.go) call. It is
-transport/provider-neutral and works with any [ali.Provider](ali.go). The following
-example implements a simple **R**ead **E**val **P**rint **L**oop with the help of
-the [ali.Session](./session/session.go):
+context across multiple requests. A session stores conversation history
+in memory and automatically includes prior messages on each [Talk](session/session.go)
+call. It is transport/provider-neutral and works with any [ali.Provider](ali.go).
+The following example implements a simple **R**ead **E**val **P**rint **L**oop
+with the help of the [ali.Session](./session/session.go):
 
 ```go
 package main
@@ -82,7 +82,7 @@ methods.
 
 This opens the door for more than just writing to or reading from files on disk,
 and creates possibilities like storing a session in a database of some kind &ndash;
-for example, a JSONB column in a postgresql database would be perfect:
+for example, a JSONB column in a PostgreSQL database would be perfect:
 
 ```go
 package main
@@ -143,11 +143,13 @@ func main() {
 
 * 🗂️ Stateless one-shot completions via [ali.Provider.Complete](ali.go)
 * 🛠️ Composable request options via [ali.WithPrompt](config.go), [ali.WithRole](config.go) and friends
+* 🖼️ Image generation via [ali.Provider.Images](ali.go)
 
 #### Sessions
 
 * 💬 In-memory multi-turn conversations via [session.Session](session/session.go)
 * 🔁 Conversation continuity via [session.Talk(...)](session/session.go)
+* 💾 Session persistence via [session.Save](session/session.go), [session.Restore](session/session.go), and friends
 
 #### Completions
 
