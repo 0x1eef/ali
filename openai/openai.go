@@ -81,6 +81,6 @@ func (provider *OpenAI) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	return nil
 }
 
-func (provider *OpenAI) Images() (ali.Images) {
+func (provider *OpenAI) Images() ali.Images {
 	return Images{}
 }

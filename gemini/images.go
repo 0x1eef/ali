@@ -97,6 +97,7 @@ func (i Images) post(g *Gemini, cfg *ali.ImageConfig, body []byte) (*http.Respon
 		request.WithPath(fmt.Sprintf("/v1beta/models/%s:predict?key=%s", cfg.Model, g.Token)),
 		request.WithBody(bytes.NewReader(body)),
 		request.WithClient(g.Client),
+		request.WithContext(cfg.Ctx),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
 			return nil

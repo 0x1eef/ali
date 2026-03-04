@@ -1,6 +1,8 @@
 package image
 
 import (
+	"context"
+
 	"github.com/0x1eef/ali"
 )
 
@@ -25,5 +27,11 @@ func WithModel(model string) func(*ali.ImageConfig) {
 func WithParams(params ali.Params) func(*ali.ImageConfig) {
 	return func(r *ali.ImageConfig) {
 		r.Params = params
+	}
+}
+
+func WithContext(ctx context.Context) func(*ali.ImageConfig) {
+	return func(r *ali.ImageConfig) {
+		r.Ctx = ctx
 	}
 }

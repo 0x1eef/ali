@@ -16,10 +16,11 @@ type CompletionConfig struct {
 }
 
 type ImageConfig struct {
-	Prompt   string `json:"-"`
-	Quantity int    `json:"-"`
-	Model    string `json:"-"`
-	Params   Params `json:"-"`
+	Prompt   string          `json:"-"`
+	Quantity int             `json:"-"`
+	Model    string          `json:"-"`
+	Params   Params          `json:"-"`
+	Ctx      context.Context `json:"-"`
 }
 
 // WithPrompt sets the prompt text for a request.

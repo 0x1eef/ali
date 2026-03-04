@@ -2,6 +2,7 @@ package request
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	neturl "net/url"
@@ -17,6 +18,7 @@ type config struct {
 	setup  func(req *http.Request) error
 	body   *bytes.Reader
 	client *http.Client
+	ctx    context.Context
 }
 
 func WithParams(params ali.Params) func(cfg *config) {
@@ -52,6 +54,12 @@ func WithBody(body *bytes.Reader) func(cfg *config) {
 func WithSetup(setup func(req *http.Request) error) func(cfg *config) {
 	return func(cfg *config) {
 		cfg.setup = setup
+	}
+}
+
+func WithContext(ctx context.Context) func(cfg *config) {
+	return func(cfg *config) {
+		cfg.ctx = ctx
 	}
 }
 
@@ -107,6 +115,9 @@ func (cfg *config) newRequest(verb, url string) (*http.Request, error) {
 	req, err := http.NewRequest(verb, url, cfg.body)
 	if err != nil {
 		return nil, err
+	}
+	if cfg.ctx != nil {
+		req = req.WithContext(cfg.ctx)
 	}
 	if err := cfg.setup(req); err != nil {
 		return nil, err

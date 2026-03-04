@@ -33,6 +33,7 @@ type Completion interface {
 	// This can be one of the following:
 	// 1) openai.Completion
 	// 2) anthropic.Completion
+	// 3) gemini.Completion
 	Raw() any
 }
 
