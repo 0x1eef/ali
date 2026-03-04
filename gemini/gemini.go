@@ -76,10 +76,10 @@ func (provider *Gemini) Complete(options ...func(cfg *ali.CompletionConfig)) (al
 }
 
 func (provider *Gemini) ApplyDefaults(cfg *ali.CompletionConfig) error {
-	if cfg.Role != "" {
+	if cfg.Role == "" {
 		cfg.Role = "user"
 	}
-	if cfg.Model != "" {
+	if cfg.Model == "" {
 		cfg.Model = "gemini-2.5-flash"
 	}
 	return nil
