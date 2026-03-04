@@ -11,18 +11,21 @@ import (
 )
 
 type Gemini struct {
-	name   ali.ProviderName `json:"-"`
-	token  string           `json:"-"`
-	host   string           `json:"-"`
-	client *http.Client     `json:"-"`
+	Token  string       `json:"-"`
+	Host   string       `json:"-"`
+	Client *http.Client `json:"-"`
+}
+
+func (provider *Gemini) Name() ali.ProviderName {
+	return provider.Name()
 }
 
 func New(options ...func(o *Gemini)) (*Gemini, error) {
-	provider := Gemini{host: "generativelanguage.googleapis.com", client: &http.Client{}}
+	provider := Gemini{Host: "generativelanguage.googleapis.com", Client: &http.Client{}}
 	for _, set := range options {
 		set(&provider)
 	}
-	if provider.token == "" {
+	if provider.Token == "" {
 		return nil, fmt.Errorf("token is required")
 	}
 	return &provider, nil
@@ -50,13 +53,13 @@ func (provider *Gemini) Complete(options ...func(cfg *ali.CompletionConfig)) (al
 	if cfg.Params == nil {
 		cfg.Params = make(ali.Params)
 	}
-	cfg.Params["key"] = provider.token
+	cfg.Params["key"] = provider.Token
 	res, err := request.Post(
-		request.WithHost(provider.host),
+		request.WithHost(provider.Host),
 		request.WithPath(fmt.Sprintf("/v1/beta/models/%s/generateContent", cfg.Model)),
 		request.WithBody(bytes.NewReader(body)),
 		request.WithParams(cfg.Params),
-		request.WithClient(provider.client),
+		request.WithClient(provider.Client),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
 			return nil
@@ -72,10 +75,6 @@ func (provider *Gemini) Complete(options ...func(cfg *ali.CompletionConfig)) (al
 	return CompletionAdapter{completion: &comp, thread: cfg.Messages}, nil
 }
 
-func (provider *Gemini) Name() ali.ProviderName {
-	return provider.name
-}
-
 func (provider *Gemini) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	if cfg.Role != "" {
 		cfg.Role = "user"
@@ -84,4 +83,8 @@ func (provider *Gemini) ApplyDefaults(cfg *ali.CompletionConfig) error {
 		cfg.Model = "gemini-2.5-flash"
 	}
 	return nil
+}
+
+func (provider *Gemini) Images() ali.Images {
+	return Images{provider: provider}
 }

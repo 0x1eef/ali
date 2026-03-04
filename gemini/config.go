@@ -8,13 +8,13 @@ import (
 
 func WithToken(token string) func(g *Gemini) {
 	return func(g *Gemini) {
-		g.token = token
+		g.Token = token
 	}
 }
 
 func WithHost(host string) func(g *Gemini) {
 	return func(g *Gemini) {
-		g.host = host
+		g.Host = host
 	}
 }
 

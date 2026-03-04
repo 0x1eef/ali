@@ -15,6 +15,13 @@ type CompletionConfig struct {
 	MaxTokens int             `json:"-"`
 }
 
+type ImageConfig struct {
+	Prompt   string `json:"-"`
+	Quantity int    `json:"-"`
+	Model    string `json:"-"`
+	Params   Params `json:"-"`
+}
+
 // WithPrompt sets the prompt text for a request.
 func WithPrompt(prompt string) func(r *CompletionConfig) {
 	return func(r *CompletionConfig) {
