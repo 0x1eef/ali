@@ -215,6 +215,51 @@ func main() {
 }
 ```
 
+#### Context
+
+Every kind of request that Ali makes can be covered by the [context](https://pkg.go.dev/context)
+package, and this can give the caller greater control over the requests
+that Ali makes. For example, and perhaps most common, a context can be used
+to implement a request timeout that results in an error when the limit
+naturally expires:
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+)
+
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	p, err := provider.New(ali.Gemini)
+	if err != nil {
+		panic(err)
+	}
+
+	c, err := p.Complete(
+		ali.WithPrompt("I am Ali"),
+		ali.WithContext(ctx),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	text, err := c.Text()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("LLM says:\n%s\n", text)
+}
+```
+
 #### Complete
 
 All providers implement a [Complete](ali.go) method that accepts a
@@ -269,12 +314,12 @@ from a prompt that is then written to disk:
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 
 	"github.com/0x1eef/ali"
-	"github.com/0x1eef/ali/provider"
 	"github.com/0x1eef/ali/image"
+	"github.com/0x1eef/ali/provider"
 )
 
 func main() {
