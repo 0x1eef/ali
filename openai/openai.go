@@ -11,55 +11,47 @@ import (
 )
 
 type OpenAI struct {
+	name   ali.ProviderName
 	Token  string
 	Host   string
 	client *http.Client
 }
 
-func (provider *OpenAI) Name() ali.ProviderName {
-	return provider.Name()
+func (oai *OpenAI) Name() ali.ProviderName {
+	return oai.name
 }
 
 func New(options ...func(o *OpenAI)) (*OpenAI, error) {
-	provider := OpenAI{Host: "api.openai.com", client: &http.Client{}}
+	oai := OpenAI{name: ali.OpenAI, Host: "api.openai.com", client: &http.Client{}}
 	for _, set := range options {
-		set(&provider)
+		set(&oai)
 	}
-	if provider.Token == "" {
+	if oai.Token == "" {
 		return nil, fmt.Errorf("token is required")
 	}
-	return &provider, nil
+	return &oai, nil
 }
 
-func (provider *OpenAI) Complete(options ...func(*ali.CompletionConfig)) (ali.Completion, error) {
+func (oai *OpenAI) Complete(options ...func(*ali.CompletionConfig)) (ali.Completion, error) {
 	var comp Completion
 	var err error
-	cfg := ali.CompletionConfig{Provider: provider}
+	cfg := ali.CompletionConfig{Provider: oai}
 	if err = cfg.ApplyDefaults(options...); err != nil {
 		return nil, err
 	}
-	payload := struct {
-		Model     string    `json:"model"`
-		Messages  []Message `json:"messages"`
-		MaxTokens int       `json:"max_completion_tokens,omitempty"`
-	}{
-		Model:     cfg.Model,
-		Messages:  toProviderMessages(&cfg),
-		MaxTokens: cfg.MaxTokens,
-	}
-	body, err := json.Marshal(&payload)
+	params := oai.build(&cfg)
+	body, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
 	}
 	res, err := request.Post(
-		request.WithHost(provider.Host),
+		request.WithHost(oai.Host),
 		request.WithPath("/v1/chat/completions"),
 		request.WithBody(bytes.NewReader(body)),
-		request.WithParams(cfg.Params),
-		request.WithClient(provider.client),
+		request.WithClient(oai.client),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
-			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
+			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", oai.Token))
 			return nil
 		}),
 	)
@@ -73,13 +65,27 @@ func (provider *OpenAI) Complete(options ...func(*ali.CompletionConfig)) (ali.Co
 	return CompletionAdapter{completion: &comp, thread: cfg.Messages}, nil
 }
 
-func (provider *OpenAI) ApplyDefaults(cfg *ali.CompletionConfig) error {
+func (oai *OpenAI) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	if cfg.Model == "" {
 		cfg.Model = "gpt-4.1"
 	}
 	return nil
 }
 
-func (provider *OpenAI) Images() ali.Images {
-	return Images{provider: provider}
+func (oai *OpenAI) Images() ali.Images {
+	return Images{provider: oai}
+}
+
+func (oai *OpenAI) build(cfg *ali.CompletionConfig) ali.Params {
+	params := ali.Params{
+		"model":    cfg.Model,
+		"messages": toProviderMessages(cfg),
+	}
+	if cfg.MaxTokens != 0 {
+		params["max_completion_tokens"] = cfg.MaxTokens
+	}
+	for k, v := range cfg.Params {
+		params[k] = v
+	}
+	return params
 }
