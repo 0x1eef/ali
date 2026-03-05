@@ -3,8 +3,8 @@ package openai
 import (
 	"encoding/base64"
 	"fmt"
-	"os"
 	"io"
+	"os"
 	"path/filepath"
 
 	"github.com/0x1eef/ali"
