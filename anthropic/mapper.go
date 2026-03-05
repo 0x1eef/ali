@@ -10,8 +10,14 @@ type Message struct {
 }
 
 type Content struct {
+	Type   string  `json:"type"`
+	Text   string  `json:"text,omitempty"`
+	Source *Source `json:"source,omitempty"`
+}
+
+type Source struct {
 	Type string `json:"type"`
-	Text string `json:"text,omitempty"`
+	Url  string `json:"url,omitempty"`
 }
 
 func toProviderMessages(cfg *ali.CompletionConfig) []Message {
@@ -26,6 +32,11 @@ func toProviderMessages(cfg *ali.CompletionConfig) []Message {
 	}
 	for _, text := range cfg.Texts {
 		contents = append(contents, Content{Type: "text", Text: text})
+	}
+	for _, url := range cfg.ImageUrls {
+		source := Source{Type: "url", Url: url}
+		content := Content{Type: "image", Source: &source}
+		contents = append(contents, content)
 	}
 	message.Content = contents
 	return append(messages, message)
