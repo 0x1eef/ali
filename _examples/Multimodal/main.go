@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	p, err := provider.New(ali.OpenAI)
+	p, err := provider.New(ali.Gemini)
 	if err != nil {
 		panic(err)
 	}

@@ -14,9 +14,9 @@ type Message struct {
 }
 
 type Content struct {
-	Type   string `json:"type"`
-	Text   string `json:"text,omitempty"`
-	Source Source `json:"source,omitempty"`
+	Type   string  `json:"type"`
+	Text   string  `json:"text,omitempty"`
+	Source *Source `json:"source,omitempty"`
 }
 
 type Source struct {
@@ -41,7 +41,7 @@ func toProviderMessages(cfg *ali.CompletionConfig) ([]Message, error) {
 	}
 	for _, url := range cfg.ImageUrls {
 		source := Source{Type: "url", Url: url}
-		content := Content{Type: "image", Source: source}
+		content := Content{Type: "image", Source: &source}
 		contents = append(contents, content)
 	}
 	for _, pdf := range cfg.Pdfs {
@@ -80,6 +80,6 @@ func fileToContent(file, kind string) (Content, error) {
 	b64 := base64.StdEncoding.EncodeToString(b)
 	return Content{
 		Type:   "document",
-		Source: Source{Type: "base64", MediaType: kind, Data: b64},
+		Source: &Source{Type: "base64", MediaType: kind, Data: b64},
 	}, nil
 }

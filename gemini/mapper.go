@@ -31,6 +31,10 @@ func toProviderMessages(cfg *ali.CompletionConfig) ([]Message, error) {
 	for _, text := range cfg.Texts {
 		parts = append(parts, Part{Text: text})
 	}
+	for _, url := range cfg.ImageUrls {
+		fileData := FileData{FileURI: url}
+		parts = append(parts, Part{FileData: &fileData})
+	}
 	message.Parts = parts
 	return append(messages, message), nil
 }
