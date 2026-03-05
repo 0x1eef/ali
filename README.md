@@ -229,11 +229,8 @@ All providers implement a [Complete](ali.go) method that accepts a
 variable number of options and returns a [ali.Completion](ali.go)
 interface that is common across all providers. This method is stateless
 and does not carry state between method calls.  See [config.go](./config.go)
-for a list of all available options, and see the [next example](#session)
-that introduces sessions for how to maintain state between method calls.
-
-The following example sends a simple prompt and prints the text response to
-the terminal:
+for a list of all available options. The following example sends a simple
+prompt and prints the text response to the terminal:
 
 ```go
 package main

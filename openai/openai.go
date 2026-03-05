@@ -39,7 +39,10 @@ func (oai *OpenAI) Complete(options ...func(*ali.CompletionConfig)) (ali.Complet
 	if err = cfg.ApplyDefaults(options...); err != nil {
 		return nil, err
 	}
-	params := oai.build(&cfg)
+	params, err := oai.build(&cfg)
+	if err != nil {
+		return nil, err
+	}
 	body, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
@@ -76,10 +79,14 @@ func (oai *OpenAI) Images() ali.Images {
 	return Images{provider: oai}
 }
 
-func (oai *OpenAI) build(cfg *ali.CompletionConfig) ali.Params {
+func (oai *OpenAI) build(cfg *ali.CompletionConfig) (ali.Params, error) {
+	mesgs, err := toProviderMessages(cfg)
+	if err != nil {
+		return nil, err
+	}
 	params := ali.Params{
 		"model":    cfg.Model,
-		"messages": toProviderMessages(cfg),
+		"messages": mesgs,
 	}
 	if cfg.MaxTokens != 0 {
 		params["max_completion_tokens"] = cfg.MaxTokens
@@ -87,5 +94,5 @@ func (oai *OpenAI) build(cfg *ali.CompletionConfig) ali.Params {
 	for k, v := range cfg.Params {
 		params[k] = v
 	}
-	return params
+	return params, nil
 }

@@ -15,7 +15,7 @@ type Content struct {
 	ImageUrl string `json:"image_url,omitempty"`
 }
 
-func toProviderMessages(cfg *ali.CompletionConfig) []Message {
+func toProviderMessages(cfg *ali.CompletionConfig) ([]Message, error) {
 	var (
 		messages = make([]Message, 0, len(cfg.Messages)+1)
 		message  = Message{Role: cfg.Role}
@@ -32,7 +32,7 @@ func toProviderMessages(cfg *ali.CompletionConfig) []Message {
 		contents = append(contents, Content{Type: "image_url", ImageUrl: url})
 	}
 	message.Content = contents
-	return append(messages, message)
+	return append(messages, message), nil
 }
 
 func fromProviderMessages(completion *Completion) []ali.Message {

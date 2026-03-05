@@ -39,7 +39,10 @@ func (ant *Anthropic) Complete(options ...func(cfg *ali.CompletionConfig)) (ali.
 	if err := cfg.ApplyDefaults(options...); err != nil {
 		return nil, err
 	}
-	params := ant.build(&cfg)
+	params, err := ant.build(&cfg)
+	if err != nil {
+		return nil, err
+	}
 	body, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
@@ -76,14 +79,18 @@ func (ant *Anthropic) ApplyDefaults(cfg *ali.CompletionConfig) error {
 	return nil
 }
 
-func (ant *Anthropic) build(cfg *ali.CompletionConfig) ali.Params {
+func (ant *Anthropic) build(cfg *ali.CompletionConfig) (ali.Params, error) {
+	mesgs, err := toProviderMessages(cfg)
+	if err != nil {
+		return nil, err
+	}
 	params := ali.Params{
 		"model":      cfg.Model,
-		"messages":   toProviderMessages(cfg),
+		"messages":   mesgs,
 		"max_tokens": cfg.MaxTokens,
 	}
 	for k, v := range cfg.Params {
 		params[k] = v
 	}
-	return params
+	return params, nil
 }

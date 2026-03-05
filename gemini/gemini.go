@@ -39,7 +39,10 @@ func (gem *Gemini) Complete(options ...func(cfg *ali.CompletionConfig)) (ali.Com
 	if err := cfg.ApplyDefaults(options...); err != nil {
 		return nil, err
 	}
-	params := gem.build(&cfg)
+	params, err := gem.build(&cfg)
+	if err != nil {
+		return nil, err
+	}
 	body, err := json.Marshal(params)
 	if err != nil {
 		return nil, err
@@ -79,12 +82,16 @@ func (gem *Gemini) Images() ali.Images {
 	return Images{provider: gem}
 }
 
-func (gem *Gemini) build(cfg *ali.CompletionConfig) ali.Params {
+func (gem *Gemini) build(cfg *ali.CompletionConfig) (ali.Params, error) {
+	mesgs, err := toProviderMessages(cfg)
+	if err != nil {
+		return nil, err
+	}
 	params := ali.Params{
-		"contents": toProviderMessages(cfg),
+		"contents": mesgs,
 	}
 	for k, v := range cfg.Params {
 		params[k] = v
 	}
-	return params
+	return params, nil
 }

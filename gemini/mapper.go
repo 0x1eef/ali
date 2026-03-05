@@ -18,7 +18,7 @@ type Part struct {
 	FunctionResponse *FunctionResponse `json:"functionResponse,omitempty"`
 }
 
-func toProviderMessages(cfg *ali.CompletionConfig) []Message {
+func toProviderMessages(cfg *ali.CompletionConfig) ([]Message, error) {
 	var (
 		messages = make([]Message, 0, len(cfg.Messages)+1)
 		message  = Message{Role: cfg.Role}
@@ -32,7 +32,7 @@ func toProviderMessages(cfg *ali.CompletionConfig) []Message {
 		parts = append(parts, Part{Text: text})
 	}
 	message.Parts = parts
-	return append(messages, message)
+	return append(messages, message), nil
 }
 
 func fromProviderMessages(completion *Completion) []ali.Message {
