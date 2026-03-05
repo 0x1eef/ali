@@ -368,11 +368,11 @@ func main() {
 
 #### Multimodal
 
-[ali.WithText](ali.go) sends text input, but a request does not need to be
+[ali.WithText](config.go) sends text input, but a request does not need to be
 text-only. Providers can accept multimodal input where a single message has
-multiple parts. In Ali, this is done with options like [ali.WithText](ali.go),
-[ali.WithImageUrl](ali.go), and friends &ndash; all of which can be used
-together in the same request, or independently of each other.
+multiple parts. In Ali, this is done with options like [ali.WithText](config.go),
+[ali.WithPdf](config.go), [ali.WithImageUrl](config.go), and friends &ndash; all
+of which can be used together in the same request, or independently of each other.
 
 For example, a common scenario is to have one part that asks a question as
 text, and another part that is the subject of the question. The subject might
@@ -398,6 +398,8 @@ func main() {
 	c, err := p.Complete(
 		ali.WithText("Describe the image"),
 		ali.WithImageUrl("https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg"),
+		ali.WithText("Summarize the book"),
+		ali.WithPdf("book.pdf"),
 	)
 	if err != nil {
 		panic(err)

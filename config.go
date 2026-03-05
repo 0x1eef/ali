@@ -8,6 +8,7 @@ type CompletionConfig struct {
 	Provider  Provider        `json:"-"`
 	Texts     []string        `json:"-"`
 	ImageUrls []string        `json:"-"`
+	Pdfs      []string        `json:"-"`
 	Role      string          `json:"-"`
 	Params    Params          `json:"-"`
 	Ctx       context.Context `json:"-"`
@@ -35,6 +36,13 @@ func WithText(prompt string) func(r *CompletionConfig) {
 func WithImageUrl(url string) func(r *CompletionConfig) {
 	return func(r *CompletionConfig) {
 		r.ImageUrls = append(r.ImageUrls, url)
+	}
+}
+
+// WithPdf includes a PDF with a request.
+func WithPdf(pdf string) func(r *CompletionConfig) {
+	return func(r *CompletionConfig) {
+		r.Pdfs = append(r.Pdfs, pdf)
 	}
 }
 
