@@ -1,6 +1,10 @@
 package gemini
 
 import (
+	"encoding/base64"
+	"io"
+	"os"
+
 	"github.com/0x1eef/ali"
 )
 
@@ -35,6 +39,13 @@ func toProviderMessages(cfg *ali.CompletionConfig) ([]Message, error) {
 		fileData := FileData{FileURI: url}
 		parts = append(parts, Part{FileData: &fileData})
 	}
+	for _, pdf := range cfg.Pdfs {
+		part, err := fileToContent(pdf, "application/pdf")
+		if err != nil {
+			return nil, err
+		}
+		parts = append(parts, part)
+	}
 	message.Parts = parts
 	return append(messages, message), nil
 }
@@ -52,4 +63,19 @@ func fromProviderMessages(completion *Completion) []ali.Message {
 		msgs = append(msgs, msg)
 	}
 	return msgs
+}
+
+func fileToContent(file, kind string) (Part, error) {
+	f, err := os.Open(file)
+	if err != nil {
+		return Part{}, err
+	}
+	defer f.Close()
+	b, err := io.ReadAll(f)
+	if err != nil {
+		return Part{}, err
+	}
+	b64 := base64.StdEncoding.EncodeToString(b)
+	inlineData := Blob{MIMEType: kind, Data: b64}
+	return Part{InlineData: &inlineData}, nil
 }
