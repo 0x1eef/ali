@@ -369,6 +369,51 @@ func main() {
 }
 ```
 
+#### Multimodal
+
+[ali.WithText](ali.go) sends text input, but a request does not need to be
+text-only. Providers can accept multimodal input where a single message has
+multiple parts. In Ali, this is done with options like [ali.WithText](ali.go),
+[ali.WithImageUrl](ali.go), and friends &ndash; all of which can be used
+together in the same request, or independently of each other.
+
+For example, a common scenario is to have one part that asks a question as
+text, and another part that is the subject of the question. The subject might
+be a local file, or the URL to an image &ndash; both of which are treated as
+non-text inputs by providers and represented differently in a request:
+
+```go
+package main
+
+import (
+	"fmt"
+
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+)
+
+func main() {
+	p, err := provider.New(ali.OpenAI)
+	if err != nil {
+		panic(err)
+	}
+
+	c, err := p.Complete(
+		ali.WithText("Describe the image"),
+		ali.WithImageUrl("https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg"),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	text, err := c.Text()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%s\n", text)
+}
+```
+
 ## Sources
 
 * [github.com/@0x1eef](https://github.com/0x1eef/ali#readme)
