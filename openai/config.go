@@ -20,9 +20,9 @@ func WithHost(host string) func(o *OpenAI) {
 	}
 }
 
-// WithPrompt sets the user prompt text.
-func WithPrompt(prompt string) func(r *ali.CompletionConfig) {
-	return ali.WithPrompt(prompt)
+// WithText sets the user prompt text.
+func WithText(prompt string) func(r *ali.CompletionConfig) {
+	return ali.WithText(prompt)
 }
 
 func WithImageUrl(url string) func(r *ali.CompletionConfig) {

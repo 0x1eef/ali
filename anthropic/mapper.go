@@ -24,8 +24,8 @@ func toProviderMessages(cfg *ali.CompletionConfig) []Message {
 		content := []Content{{Type: "text", Text: item.Text}}
 		messages = append(messages, Message{Role: item.Role, Content: content})
 	}
-	if cfg.Prompt != "" {
-		contents = append(contents, Content{Type: "text", Text: cfg.Prompt})
+	for _, text := range cfg.Texts {
+		contents = append(contents, Content{Type: "text", Text: text})
 	}
 	message.Content = contents
 	return append(messages, message)

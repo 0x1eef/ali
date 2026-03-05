@@ -21,7 +21,7 @@ func main() {
 		panic(err)
 	}
 
-	c, err := ses.Talk(ali.WithPrompt("summarize the conversation"))
+	c, err := ses.Talk(ali.WithText("summarize the conversation"))
 	if err != nil {
 		panic(err)
 	}

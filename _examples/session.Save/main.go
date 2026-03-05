@@ -23,7 +23,7 @@ func main() {
 		"The truth circulates with him wherever he goes.",
 	}
 	for _, m := range messages {
-		_, err := ses.Talk(ali.WithPrompt(m))
+		_, err := ses.Talk(ali.WithText(m))
 		if err != nil {
 			panic(err)
 		}

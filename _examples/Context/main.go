@@ -19,7 +19,7 @@ func main() {
 	}
 
 	c, err := p.Complete(
-		ali.WithPrompt("I am Ali"),
+		ali.WithText("I am Ali"),
 		ali.WithContext(ctx),
 	)
 	if err != nil {

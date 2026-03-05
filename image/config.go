@@ -6,7 +6,7 @@ import (
 	"github.com/0x1eef/ali"
 )
 
-func WithPrompt(prompt string) func(*ali.ImageConfig) {
+func WithText(prompt string) func(*ali.ImageConfig) {
 	return func(r *ali.ImageConfig) {
 		r.Prompt = prompt
 	}

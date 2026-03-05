@@ -16,7 +16,7 @@ func main() {
 	}
 
 	images, err := p.Images().Create(
-		image.WithPrompt("I am the city of knowledge and Ali is its gate"),
+		image.WithText("I am the city of knowledge and Ali is its gate"),
 		image.WithQuantity(1),
 	)
 	if err != nil {

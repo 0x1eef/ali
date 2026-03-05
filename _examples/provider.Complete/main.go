@@ -14,7 +14,7 @@ func main() {
 	}
 
 	c, err := p.Complete(
-		ali.WithPrompt("I am the city of knowledge and Ali is its gate"),
+		ali.WithText("I am the city of knowledge and Ali is its gate"),
 	)
 	if err != nil {
 		panic(err)

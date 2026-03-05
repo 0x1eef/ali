@@ -59,7 +59,7 @@ func main() {
 			break
 		}
 
-		c, err := ses.Talk(ali.WithPrompt(prompt))
+		c, err := ses.Talk(ali.WithText(prompt))
 		if err != nil {
 			panic(err)
 		}
@@ -113,7 +113,7 @@ func main() {
 		"The truth circulates with him wherever he goes.",
 	}
 	for _, m := range messages {
-		_, err := ses.Talk(ali.WithPrompt(m))
+		_, err := ses.Talk(ali.WithText(m))
 		if err != nil {
 			panic(err)
 		}
@@ -145,7 +145,7 @@ func main() {
 #### Requests
 
 * 🗂️ Stateless one-shot completions via [ali.Provider.Complete](ali.go)
-* 🛠️ Composable request options via [ali.WithPrompt](config.go), [ali.WithRole](config.go) and friends
+* 🛠️ Composable request options via [ali.WithText](config.go), [ali.WithRole](config.go) and friends
 * 🖼️ Image generation via [ali.Provider.Images](ali.go)
 
 #### Sessions
@@ -252,7 +252,7 @@ func main() {
 	}
 
 	c, err := p.Complete(
-		ali.WithPrompt("I am the city of knowledge and Ali is its gate"),
+		ali.WithText("I am the city of knowledge and Ali is its gate"),
 	)
 	if err != nil {
 		panic(err)
@@ -296,7 +296,7 @@ func main() {
 	}
 
 	c, err := p.Complete(
-		ali.WithPrompt("I am Ali"),
+		ali.WithText("I am Ali"),
 		ali.WithContext(ctx),
 	)
 	if err != nil {
@@ -348,7 +348,7 @@ func main() {
 	}
 
 	images, err := imgp.Images().Create(
-		image.WithPrompt("I am the city of knowledge and Ali is its gate"),
+		image.WithText("I am the city of knowledge and Ali is its gate"),
 		image.WithQuantity(1),
 	)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 
 type CompletionConfig struct {
 	Provider  Provider        `json:"-"`
-	Prompt    string          `json:"-"`
+	Texts     []string        `json:"-"`
 	ImageUrls []string        `json:"-"`
 	Role      string          `json:"-"`
 	Params    Params          `json:"-"`
@@ -24,10 +24,10 @@ type ImageConfig struct {
 	Ctx      context.Context `json:"-"`
 }
 
-// WithPrompt sets the prompt text for a request.
-func WithPrompt(prompt string) func(r *CompletionConfig) {
+// WithText sets the prompt text for a request.
+func WithText(prompt string) func(r *CompletionConfig) {
 	return func(r *CompletionConfig) {
-		r.Prompt = prompt
+		r.Texts = append(r.Texts, prompt)
 	}
 }
 

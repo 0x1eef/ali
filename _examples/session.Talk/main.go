@@ -33,7 +33,7 @@ func main() {
 			break
 		}
 
-		comp, err := ses.Talk(ali.WithPrompt(prompt))
+		comp, err := ses.Talk(ali.WithText(prompt))
 		if err != nil {
 			panic(err)
 		}

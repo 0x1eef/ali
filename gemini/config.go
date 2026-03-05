@@ -20,9 +20,9 @@ func WithHost(host string) func(g *Gemini) {
 	}
 }
 
-// WithPrompt sets the user prompt text.
-func WithPrompt(prompt string) func(r *ali.CompletionConfig) {
-	return ali.WithPrompt(prompt)
+// WithText sets the user prompt text.
+func WithText(prompt string) func(r *ali.CompletionConfig) {
+	return ali.WithText(prompt)
 }
 
 // WithRole sets the role for the prompt message.
