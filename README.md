@@ -146,6 +146,7 @@ func main() {
 
 * 🗂️ Stateless one-shot completions via [ali.Provider.Complete](ali.go)
 * 🛠️ Composable request options via [ali.WithText](config.go), [ali.WithRole](config.go) and friends
+* 🧠 Multimodal inputs via [ali.WithText](config.go), [ali.WithImageUrl](config.go), and [ali.WithPdf](config.go)
 * 🖼️ Image generation via [ali.Provider.Images](ali.go)
 
 #### Sessions
