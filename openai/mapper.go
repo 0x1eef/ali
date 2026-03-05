@@ -10,8 +10,9 @@ type Message struct {
 }
 
 type Content struct {
-	Type string `json:"type"`
-	Text string `json:"text,omitempty"`
+	Type     string `json:"type"`
+	Text     string `json:"text,omitempty"`
+	ImageUrl string `json:"image_url,omitempty"`
 }
 
 func toProviderMessages(cfg *ali.CompletionConfig) []Message {
@@ -26,6 +27,9 @@ func toProviderMessages(cfg *ali.CompletionConfig) []Message {
 	}
 	if cfg.Prompt != "" {
 		contents = append(contents, Content{Type: "text", Text: cfg.Prompt})
+	}
+	for _, url := range cfg.ImageUrls {
+		contents = append(contents, Content{Type: "image_url", ImageUrl: url})
 	}
 	message.Content = contents
 	return append(messages, message)

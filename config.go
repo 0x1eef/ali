@@ -7,6 +7,7 @@ import (
 type CompletionConfig struct {
 	Provider  Provider        `json:"-"`
 	Prompt    string          `json:"-"`
+	ImageUrls []string        `json:"-"`
 	Role      string          `json:"-"`
 	Params    Params          `json:"-"`
 	Ctx       context.Context `json:"-"`
@@ -27,6 +28,13 @@ type ImageConfig struct {
 func WithPrompt(prompt string) func(r *CompletionConfig) {
 	return func(r *CompletionConfig) {
 		r.Prompt = prompt
+	}
+}
+
+// WithImageUrl includes an image URL with a request.
+func WithImageUrl(url string) func(r *CompletionConfig) {
+	return func(r *CompletionConfig) {
+		r.ImageUrls = append(r.ImageUrls, url)
 	}
 }
 

@@ -25,6 +25,10 @@ func WithPrompt(prompt string) func(r *ali.CompletionConfig) {
 	return ali.WithPrompt(prompt)
 }
 
+func WithImageUrl(url string) func(r *ali.CompletionConfig) {
+	return ali.WithImageUrl(url)
+}
+
 // WithRole sets the role for the prompt message.
 func WithRole(role string) func(r *ali.CompletionConfig) {
 	return ali.WithRole(role)
