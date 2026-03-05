@@ -36,6 +36,9 @@ func (i Images) applyDefaults(options ...func(*ali.ImageConfig)) *ali.ImageConfi
 	for _, set := range options {
 		set(&cfg)
 	}
+	if cfg.Client == nil {
+		cfg.Client = &http.Client{}
+	}
 	return &cfg
 }
 
@@ -92,7 +95,7 @@ func (i Images) post(g *Gemini, cfg *ali.ImageConfig, body []byte) (*http.Respon
 		request.WithHost(g.Host),
 		request.WithPath(fmt.Sprintf("/v1beta/models/%s:predict?key=%s", cfg.Model, g.Token)),
 		request.WithBody(bytes.NewReader(body)),
-		request.WithClient(g.Client),
+		request.WithClient(cfg.Client),
 		request.WithContext(cfg.Ctx),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")

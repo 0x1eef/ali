@@ -36,6 +36,9 @@ func (i Images) applyDefaults(options ...func(*ali.ImageConfig)) *ali.ImageConfi
 	for _, set := range options {
 		set(&cfg)
 	}
+	if cfg.Client == nil {
+		cfg.Client = &http.Client{}
+	}
 	return &cfg
 }
 
@@ -83,7 +86,7 @@ func (i Images) post(oai *OpenAI, body []byte, cfg *ali.ImageConfig) (*http.Resp
 		request.WithHost(oai.Host),
 		request.WithPath("/v1/images/generations"),
 		request.WithBody(bytes.NewReader(body)),
-		request.WithClient(oai.client),
+		request.WithClient(cfg.Client),
 		request.WithContext(cfg.Ctx),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")

@@ -11,10 +11,9 @@ import (
 )
 
 type Gemini struct {
-	name   ali.ProviderName `json:"-"`
-	Token  string           `json:"-"`
-	Host   string           `json:"-"`
-	Client *http.Client     `json:"-"`
+	name  ali.ProviderName `json:"-"`
+	Token string           `json:"-"`
+	Host  string           `json:"-"`
 }
 
 func (gem *Gemini) Name() ali.ProviderName {
@@ -22,7 +21,7 @@ func (gem *Gemini) Name() ali.ProviderName {
 }
 
 func New(options ...func(o *Gemini)) (*Gemini, error) {
-	provider := Gemini{name: ali.Gemini, Host: "generativelanguage.googleapis.com", Client: &http.Client{}}
+	provider := Gemini{name: ali.Gemini, Host: "generativelanguage.googleapis.com"}
 	for _, set := range options {
 		set(&provider)
 	}
@@ -51,7 +50,7 @@ func (gem *Gemini) Complete(options ...func(cfg *ali.CompletionConfig)) (ali.Com
 		request.WithHost(gem.Host),
 		request.WithPath(fmt.Sprintf("/v1beta/models/%s:generateContent?key=%s", cfg.Model, gem.Token)),
 		request.WithBody(bytes.NewReader(body)),
-		request.WithClient(gem.Client),
+		request.WithClient(cfg.Client),
 		request.WithContext(cfg.Ctx),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")

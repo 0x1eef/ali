@@ -11,10 +11,9 @@ import (
 )
 
 type Anthropic struct {
-	name   ali.ProviderName `json:"-"`
-	token  string           `json:"-"`
-	host   string           `json:"-"`
-	client *http.Client     `json:"-"`
+	name  ali.ProviderName `json:"-"`
+	token string           `json:"-"`
+	host  string           `json:"-"`
 }
 
 func (ant *Anthropic) Name() ali.ProviderName {
@@ -22,7 +21,7 @@ func (ant *Anthropic) Name() ali.ProviderName {
 }
 
 func New(options ...func(o *Anthropic)) (*Anthropic, error) {
-	provider := Anthropic{name: ali.Anthropic, host: "api.anthropic.com", client: &http.Client{}}
+	provider := Anthropic{name: ali.Anthropic, host: "api.anthropic.com"}
 	for _, set := range options {
 		set(&provider)
 	}
@@ -51,7 +50,7 @@ func (ant *Anthropic) Complete(options ...func(cfg *ali.CompletionConfig)) (ali.
 		request.WithHost(ant.host),
 		request.WithPath("/v1/messages"),
 		request.WithBody(bytes.NewReader(body)),
-		request.WithClient(ant.client),
+		request.WithClient(cfg.Client),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
 			req.Header.Add("x-api-key", ant.token)

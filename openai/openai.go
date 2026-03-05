@@ -11,10 +11,9 @@ import (
 )
 
 type OpenAI struct {
-	name   ali.ProviderName
-	Token  string
-	Host   string
-	client *http.Client
+	name  ali.ProviderName
+	Token string
+	Host  string
 }
 
 func (oai *OpenAI) Name() ali.ProviderName {
@@ -22,7 +21,7 @@ func (oai *OpenAI) Name() ali.ProviderName {
 }
 
 func New(options ...func(o *OpenAI)) (*OpenAI, error) {
-	oai := OpenAI{name: ali.OpenAI, Host: "api.openai.com", client: &http.Client{}}
+	oai := OpenAI{name: ali.OpenAI, Host: "api.openai.com"}
 	for _, set := range options {
 		set(&oai)
 	}
@@ -51,7 +50,7 @@ func (oai *OpenAI) Complete(options ...func(*ali.CompletionConfig)) (ali.Complet
 		request.WithHost(oai.Host),
 		request.WithPath("/v1/chat/completions"),
 		request.WithBody(bytes.NewReader(body)),
-		request.WithClient(oai.client),
+		request.WithClient(cfg.Client),
 		request.WithSetup(func(req *http.Request) error {
 			req.Header.Add("Content-Type", "application/json")
 			req.Header.Add("Authorization", fmt.Sprintf("Bearer %s", oai.Token))

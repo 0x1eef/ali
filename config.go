@@ -2,6 +2,7 @@ package ali
 
 import (
 	"context"
+	"net/http"
 )
 
 type CompletionConfig struct {
@@ -12,6 +13,7 @@ type CompletionConfig struct {
 	Role      string          `json:"-"`
 	Params    Params          `json:"-"`
 	Ctx       context.Context `json:"-"`
+	Client    *http.Client    `json:"-"`
 	Model     string          `json:"-"`
 	Messages  []Message       `json:"-"`
 	MaxTokens int             `json:"-"`
@@ -23,6 +25,7 @@ type ImageConfig struct {
 	Model    string          `json:"-"`
 	Params   Params          `json:"-"`
 	Ctx      context.Context `json:"-"`
+	Client   *http.Client    `json:"-"`
 }
 
 // WithText sets the prompt text for a request.
@@ -74,6 +77,13 @@ func WithContext(ctx context.Context) func(r *CompletionConfig) {
 	}
 }
 
+// WithClient sets the http client.
+func WithClient(client *http.Client) func(r *CompletionConfig) {
+	return func(r *CompletionConfig) {
+		r.Client = client
+	}
+}
+
 // WithMessages appends existing conversation messages.
 func WithMessages(msgs []Message) func(r *CompletionConfig) {
 	return func(r *CompletionConfig) {
@@ -87,6 +97,9 @@ func (cfg *CompletionConfig) ApplyDefaults(options ...func(*CompletionConfig)) e
 	}
 	if cfg.Role == "" {
 		cfg.Role = "user"
+	}
+	if cfg.Client == nil {
+		cfg.Client = &http.Client{}
 	}
 	return cfg.Provider.ApplyDefaults(cfg)
 }

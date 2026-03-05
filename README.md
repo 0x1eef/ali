@@ -125,6 +125,58 @@ func main() {
 }
 ```
 
+#### Pool
+
+Ali creates a new [http.Client](https://pkg.go.dev/net/http#Client) for each
+request by default. If you want finer transport control, use
+[ali.WithClient](config.go) to provide your own client. The example below uses
+a custom [http.Transport](https://pkg.go.dev/net/http#Transport) to configure
+a connection pool and applies it once at session construction, so all
+[session.Talk](session/session.go) calls reuse the same connection pool:
+
+```go
+package main
+
+import (
+	"net/http"
+	"time"
+
+	"github.com/0x1eef/ali"
+	"github.com/0x1eef/ali/provider"
+	"github.com/0x1eef/ali/session"
+)
+
+func main() {
+	p, err := provider.New(ali.OpenAI)
+	if err != nil {
+		panic(err)
+	}
+
+	transport := &http.Transport{
+		MaxIdleConns:        100,
+		MaxIdleConnsPerHost: 20,
+		MaxConnsPerHost:     50,
+		IdleConnTimeout:     90 * time.Second,
+	}
+	pool := &http.Client{Transport: transport}
+
+	ses, err := session.New(p, ali.WithClient(pool))
+	if err != nil {
+		panic(err)
+	}
+
+	messages := []string{
+		"Explain connection pooling in one sentence.",
+		"Now explain it with an analogy.",
+	}
+	for _, m := range messages {
+		_, err = ses.Talk(ali.WithText(m))
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+```
 
 ## Features
 
@@ -146,6 +198,7 @@ func main() {
 
 * 🗂️ Stateless one-shot completions via [ali.Provider.Complete](ali.go)
 * 🛠️ Composable request options via [ali.WithText](config.go), [ali.WithRole](config.go) and friends
+* 🌊 Connection pool support via [ali.WithClient](config.go) and [http.Transport](https://pkg.go.dev/net/http#Transport)
 * 🧠 Multimodal inputs via [ali.WithText](config.go), [ali.WithImageUrl](config.go), and [ali.WithPdf](config.go)
 * 🖼️ Image generation via [ali.Provider.Images](ali.go)
 
