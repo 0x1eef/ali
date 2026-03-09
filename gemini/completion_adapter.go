@@ -11,24 +11,20 @@ type CompletionAdapter struct {
 	thread     []ali.Message
 }
 
-func (ca CompletionAdapter) InputTokens() int {
-	return ca.completion.UsageMetadata.PromptTokenCount
-}
-
-func (ca CompletionAdapter) OutputTokens() int {
-	return ca.completion.UsageMetadata.CandidatesTokenCount
-}
-
-func (ca CompletionAdapter) TotalTokens() int {
-	return ca.completion.UsageMetadata.TotalTokenCount
-}
-
 func (ca CompletionAdapter) Raw() any {
 	return ca.completion
 }
 
 func (ca CompletionAdapter) Messages() []ali.Message {
 	return fromProviderMessages(ca.completion)
+}
+
+func (ca CompletionAdapter) Usage() ali.Usage {
+	return ali.Usage{
+		InputTokens:  ca.completion.UsageMetadata.PromptTokenCount,
+		OutputTokens: ca.completion.UsageMetadata.CandidatesTokenCount,
+		TotalTokens:  ca.completion.UsageMetadata.TotalTokenCount,
+	}
 }
 
 func (ca CompletionAdapter) Text() (string, error) {

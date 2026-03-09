@@ -11,20 +11,22 @@ type CompletionAdapter struct {
 	thread     []ali.Message
 }
 
-func (ca CompletionAdapter) InputTokens() int {
-	return ca.completion.Usage.InputTokens
-}
-
-func (ca CompletionAdapter) OutputTokens() int {
-	return ca.completion.Usage.OutputTokens
-}
-
-func (ca CompletionAdapter) TotalTokens() int {
-	return ca.InputTokens() + ca.OutputTokens()
-}
-
 func (ca CompletionAdapter) Raw() any {
 	return ca.completion
+}
+
+func (ca CompletionAdapter) Messages() []ali.Message {
+	return fromProviderMessages(ca.completion)
+}
+
+func (ca CompletionAdapter) Usage() ali.Usage {
+	inputTokens := ca.completion.Usage.InputTokens
+	outputTokens := ca.completion.Usage.OutputTokens
+	return ali.Usage{
+		InputTokens:  inputTokens,
+		OutputTokens: outputTokens,
+		TotalTokens:  inputTokens + outputTokens,
+	}
 }
 
 func (ca CompletionAdapter) Text() (string, error) {
@@ -33,10 +35,6 @@ func (ca CompletionAdapter) Text() (string, error) {
 	} else {
 		return "", fmt.Errorf("no suitable choices found")
 	}
-}
-
-func (ca CompletionAdapter) Messages() []ali.Message {
-	return fromProviderMessages(ca.completion)
 }
 
 func (ca CompletionAdapter) Thread() []ali.Message {

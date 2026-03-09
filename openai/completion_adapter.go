@@ -11,24 +11,20 @@ type CompletionAdapter struct {
 	thread     []ali.Message
 }
 
-func (ca CompletionAdapter) InputTokens() int {
-	return ca.completion.Usage.InputTokens
-}
-
-func (ca CompletionAdapter) OutputTokens() int {
-	return ca.completion.Usage.OutputTokens
-}
-
-func (ca CompletionAdapter) TotalTokens() int {
-	return ca.completion.Usage.TotalTokens
-}
-
 func (ca CompletionAdapter) Raw() any {
 	return ca.completion
 }
 
 func (ca CompletionAdapter) Messages() []ali.Message {
 	return fromProviderMessages(ca.completion)
+}
+
+func (ca CompletionAdapter) Usage() ali.Usage {
+	return ali.Usage{
+		InputTokens:  ca.completion.Usage.InputTokens,
+		OutputTokens: ca.completion.Usage.OutputTokens,
+		TotalTokens:  ca.completion.Usage.TotalTokens,
+	}
 }
 
 func (ca CompletionAdapter) Text() (string, error) {

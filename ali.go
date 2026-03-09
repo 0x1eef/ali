@@ -18,11 +18,15 @@ type Message struct {
 	Text string `json:"content"`
 }
 
+type Usage struct {
+	InputTokens  int
+	OutputTokens int
+	TotalTokens  int
+}
+
 type Completion interface {
-	InputTokens() int
-	OutputTokens() int
-	TotalTokens() int
 	Text() (string, error)
+	Usage() Usage
 	Messages() []Message
 	Thread() []Message
 	// Raw returns the provider-specific completion payload (eg openai.Completion).
